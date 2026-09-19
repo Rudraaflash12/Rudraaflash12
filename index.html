@@ -1,0 +1,427 @@
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#10252b">
+<title>TERRAFALL — A world of your own</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#10252b;--panel:rgba(16,37,43,.91);--cream:#f4f2e9;--muted:#a4b9b8;--mint:#b9f3ce;--lime:#d2f27c;--orange:#ffb27c;--line:rgba(218,241,232,.14);--mono:'DM Mono',monospace;--display:'Space Grotesk',sans-serif}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--cream);font-family:Manrope,sans-serif}button,input{font:inherit}button{cursor:pointer;border:0;color:inherit}button:focus-visible,input:focus-visible{outline:2px solid var(--lime);outline-offset:4px}button:disabled{opacity:.45;cursor:default}
+#app{position:relative;width:100%;height:100dvh;overflow:hidden}#world{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}.shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(10,31,36,.9) 0%,rgba(10,31,36,.62) 31%,rgba(10,31,36,.04) 72%),linear-gradient(0deg,rgba(10,31,36,.42),transparent 30%);transition:opacity .5s}
+.screen{position:absolute;inset:0}.hidden{display:none!important}
+.menu-header{height:100px;padding:28px 5vw;display:flex;align-items:center;justify-content:space-between;gap:20px}.brand{display:flex;align-items:center;gap:12px}.brand-mark{width:35px;height:35px;display:grid;place-items:center;background:var(--mint);color:var(--bg);border-radius:10px;transform:rotate(-7deg)}.brand-name{font-family:var(--display);font-size:21px;letter-spacing:2px;font-weight:700}.brand-sub{font:9px var(--mono);letter-spacing:2px;color:var(--muted);margin-top:3px}.menu-nav{display:flex;align-items:center;gap:25px}.text-btn{background:none;color:var(--muted);font-size:12px;font-weight:700;transition:color .2s}.text-btn:hover{color:var(--cream)}.icon-btn{width:39px;height:39px;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;background:rgba(16,37,43,.3);color:var(--cream)}.icon-btn:hover{background:rgba(185,243,206,.15)}
+.hero{position:absolute;left:7vw;top:50%;transform:translateY(-52%);width:min(560px,52vw)}.eyebrow{display:flex;align-items:center;gap:9px;font:10px var(--mono);letter-spacing:2px;color:var(--mint);text-transform:uppercase;margin-bottom:23px}.live-dot{width:6px;height:6px;border-radius:50%;background:var(--mint);box-shadow:0 0 12px var(--mint)}h1{font-family:var(--display);font-size:clamp(48px,6.3vw,91px);line-height:.98;letter-spacing:-5px;font-weight:500;margin:0}h1 em{font-style:normal;color:var(--mint)}.hero-copy{font-size:14px;line-height:1.85;max-width:330px;color:#c1cfcb;margin:25px 0 28px}.mode-picker{display:flex;align-items:center;gap:5px;padding:5px;border:1px solid var(--line);width:fit-content;border-radius:11px;background:rgba(11,31,35,.35);margin-bottom:14px}.mode{padding:10px 17px;background:transparent;border-radius:7px;font-size:11px;font-weight:800;color:var(--muted)}.mode.active{background:var(--cream);color:var(--bg)}.primary{background:var(--lime);color:#1b342b;border-radius:9px;padding:17px 23px;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:22px;transition:transform .2s,background .2s;min-width:191px}.primary:hover{transform:translateY(-3px);background:#e1ffa0}.primary svg{width:17px}.seed-line{display:flex;align-items:center;gap:12px;margin-top:18px;font:9px var(--mono);color:var(--muted);letter-spacing:.5px}.seed-line input{width:83px;background:none;border:0;border-bottom:1px solid var(--line);color:var(--cream);padding:5px 0;font:10px var(--mono);outline:none}.daily{display:flex;align-items:center;gap:7px;background:none;color:var(--orange);font-size:10px;font-weight:800;padding:0}.daily svg{width:14px}
+.preview-label{position:absolute;right:6vw;top:25%;text-align:right}.preview-label .tiny{font:9px var(--mono);letter-spacing:2px;color:rgba(255,255,255,.7)}.preview-title{font-family:var(--display);font-size:20px;letter-spacing:-.7px;margin:9px 0}.preview-pill{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(255,255,255,.25);background:rgba(18,57,58,.3);padding:8px 11px;border-radius:20px;font:9px var(--mono);letter-spacing:.3px}.preview-pill span{width:5px;height:5px;border-radius:50%;background:var(--mint)}
+.menu-footer{position:absolute;bottom:29px;left:5vw;right:5vw;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding-top:21px}.features{display:flex;gap:36px}.feature{display:flex;align-items:center;gap:11px}.feature-icon{color:var(--mint);width:25px;height:25px}.feature strong{display:block;font-size:10px;font-weight:800}.feature small{display:block;color:var(--muted);font-size:9px;margin-top:4px}.footer-note{font:8px var(--mono);letter-spacing:1.5px;color:var(--muted)}
+#hud{position:absolute;inset:0;pointer-events:none}.hud-top{position:absolute;left:28px;right:28px;top:25px;display:flex;justify-content:space-between;align-items:flex-start}.mini-brand{font:12px var(--display);letter-spacing:2px;display:flex;align-items:center;gap:9px}.mini-brand .brand-mark{width:25px;height:25px;border-radius:7px}.mini-brand .brand-mark svg{width:17px}.vitals{display:flex;gap:19px;margin-top:20px}.vital-label{font:8px var(--mono);letter-spacing:1px;color:rgba(255,255,255,.65);margin-bottom:7px;display:flex;justify-content:space-between;width:92px}.bar{height:4px;width:92px;background:rgba(0,0,0,.22);border-radius:4px;overflow:hidden}.bar-fill{height:100%;width:100%;background:var(--mint);transition:width .3s}.bar-fill.hunger{background:var(--orange)}.hud-actions{display:flex;align-items:center;gap:10px;pointer-events:auto}.wallet{display:flex;align-items:center;gap:17px;padding:9px 15px;background:rgba(16,37,43,.58);border:1px solid var(--line);border-radius:10px;margin-right:5px}.currency{display:flex;align-items:center;gap:7px;font:11px var(--mono)}.coin-icon{width:16px;height:16px;border-radius:50%;background:var(--orange);color:#79502c;display:grid;place-items:center;font:10px var(--mono);font-weight:500}.gem-icon{color:var(--mint);font-size:16px}.hud-actions .icon-btn{background:rgba(16,37,43,.58)}
+#crosshair{position:absolute;left:50%;top:50%;width:15px;height:15px;transform:translate(-50%,-50%);opacity:.7;pointer-events:none}#crosshair:before,#crosshair:after{content:"";position:absolute;background:var(--cream);border-radius:2px}#crosshair:before{width:2px;height:15px;left:6px}#crosshair:after{height:2px;width:15px;top:6px}
+#hotbar{position:absolute;bottom:31px;left:50%;transform:translateX(-50%);display:flex;gap:6px;padding:7px;background:rgba(12,32,36,.68);border:1px solid var(--line);border-radius:12px;pointer-events:auto}.slot{width:51px;height:55px;border:1px solid transparent;border-radius:7px;background:rgba(210,239,222,.07);position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px}.slot.active{border-color:var(--lime);background:rgba(210,242,124,.15)}.slot-key{position:absolute;left:5px;top:3px;font:8px var(--mono);color:var(--muted)}.block-icon{width:22px;height:22px;border-radius:4px;box-shadow:inset 0 -5px rgba(0,0,0,.12)}.slot-count{font:8px var(--mono);color:var(--cream)}.slot-label{position:absolute;bottom:-21px;left:0;right:0;text-align:center;font:8px var(--mono);color:var(--muted);opacity:0;transition:opacity .2s}.slot:hover .slot-label{opacity:1}
+#toast{position:absolute;left:50%;top:105px;transform:translate(-50%,-10px);opacity:0;transition:.3s;background:var(--cream);color:var(--bg);padding:11px 19px;border-radius:8px;font-size:11px;font-weight:800;pointer-events:none;white-space:nowrap}#toast.show{opacity:1;transform:translate(-50%,0)}
+#modalOverlay{position:absolute;inset:0;background:rgba(6,21,26,.68);backdrop-filter:blur(9px);display:flex;align-items:center;justify-content:center;padding:20px;z-index:20}.modal{width:min(590px,100%);max-height:90dvh;overflow:auto;background:#17343b;border:1px solid rgba(191,232,216,.19);border-radius:17px;padding:32px;box-shadow:0 25px 100px rgba(0,0,0,.25)}.modal.wide{width:min(780px,100%)}.modal-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:25px}.modal-kicker{font:9px var(--mono);letter-spacing:2px;color:var(--mint);text-transform:uppercase;margin-bottom:9px}.modal h2{font-family:var(--display);font-size:29px;letter-spacing:-1.3px;font-weight:500;margin:0}.modal p{font-size:12px;line-height:1.8;color:var(--muted)}.close{background:rgba(255,255,255,.07);width:29px;height:29px;border-radius:50%;font-size:19px;color:var(--muted)}.modal .primary{width:100%;margin-top:22px}.inventory-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.pack-item{background:rgba(255,255,255,.045);border:1px solid var(--line);border-radius:9px;padding:15px 8px;text-align:center}.pack-item .block-icon{margin:auto;width:29px;height:29px}.pack-item strong{display:block;font-size:10px;margin:10px 0 5px}.pack-item span{font:9px var(--mono);color:var(--mint)}.section-label{font:9px var(--mono);letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin:26px 0 12px}.recipe-row,.setting-row{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--line);font-size:11px}.recipe-row small{display:block;color:var(--muted);font-size:9px;margin-top:4px}.small-btn{background:var(--mint);color:var(--bg);font-size:9px;font-weight:800;border-radius:6px;padding:9px 13px}.shop-balance{display:flex;gap:20px;padding:13px 16px;background:rgba(210,242,124,.07);border-radius:8px;margin-bottom:18px}.shop-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.shop-item{border:1px solid var(--line);border-radius:9px;padding:15px 10px;text-align:center;background:rgba(255,255,255,.035)}.shop-art{height:59px;border-radius:6px;background:linear-gradient(135deg,#315c57,#b9f3ce33);display:grid;place-items:center;font-size:29px;margin-bottom:11px}.shop-item strong{font-size:10px;display:block}.shop-item small{display:block;font:8px var(--mono);color:var(--muted);margin:7px 0 12px}.shop-item .small-btn{width:100%;padding:9px}.pause-actions{display:flex;flex-direction:column;gap:10px}.pause-actions .primary{margin:8px 0}.secondary{background:rgba(255,255,255,.07);border:1px solid var(--line);border-radius:8px;padding:14px;font-size:11px;font-weight:700}.guide-columns{display:grid;grid-template-columns:1fr 1fr;gap:25px}.guide-block{padding:15px;background:rgba(255,255,255,.04);border-radius:9px;margin-bottom:9px}.guide-block strong{font-size:11px}.guide-block p{margin:7px 0 0;font-size:10px}.key{display:inline-block;border:1px solid var(--line);border-radius:4px;padding:3px 6px;font:9px var(--mono);color:var(--cream);margin:3px}.blueprint{font-size:11px!important}.blueprint h3{font:11px var(--mono);color:var(--mint);letter-spacing:1px;margin:25px 0 10px}.blueprint ul{padding-left:18px;line-height:2}.code-\boxed{font:9px/1.9 var(--mono);white-space:pre-wrap;background:#0e272e;padding:15px;border-radius:8px;color:#bdd8cb;overflow:auto}
+#touchControls{display:none;position:absolute;inset:0;pointer-events:none}.joystick{position:absolute;left:25px;bottom:116px;width:112px;height:112px;border:1px solid rgba(255,255,255,.2);border-radius:50%;background:rgba(255,255,255,.07);pointer-events:auto;touch-action:none}.joystick:before,.joystick:after{content:"";position:absolute;background:rgba(255,255,255,.1);left:50%;top:14px;width:1px;height:82px}.joystick:after{transform:rotate(90deg)}.stick{position:absolute;left:35px;top:35px;width:40px;height:40px;border-radius:50%;background:rgba(185,243,206,.38);border:1px solid rgba(185,243,206,.5)}.touch-actions{position:absolute;right:22px;bottom:116px;display:flex;flex-direction:column;gap:11px;pointer-events:auto}.touch-btn{width:51px;height:51px;border-radius:50%;background:rgba(16,37,43,.58);border:1px solid rgba(255,255,255,.22);font-size:9px;font-weight:800;touch-action:none}.touch-btn.jump{width:61px;height:61px;background:rgba(185,243,206,.27)}
+@media(pointer:coarse){#touchControls{display:block}.menu-header{padding:22px 6vw}.menu-nav .text-btn{display:none}.hero{left:7vw;top:47%;width:86vw}.hero-copy{font-size:12px;max-width:280px;margin:19px 0}.preview-label{display:none}.features{gap:18px}.feature:last-child{display:none}.footer-note{display:none}h1{font-size:clamp(47px,11vw,76px);letter-spacing:-3px}.menu-footer{bottom:22px}.shade{background:linear-gradient(90deg,rgba(10,31,36,.82),rgba(10,31,36,.2)),linear-gradient(0deg,rgba(10,31,36,.5),transparent)}}
+@media(max-width:600px){.menu-header{height:82px}.brand-name{font-size:17px}.brand-sub{font-size:7px}.brand-mark{width:29px;height:29px}.menu-nav{gap:12px}.hero{top:47%}.hero .eyebrow{font-size:8px;letter-spacing:1.5px;margin-bottom:17px}.hero-copy{max-width:255px}.menu-footer{left:7vw;right:7vw}.features{gap:22px}.feature{gap:7px}.feature-icon{width:19px}.feature strong{font-size:8px}.feature small{font-size:7px}.hud-top{left:17px;right:17px;top:18px}.wallet{gap:9px;padding:8px 10px;margin-right:0}.hud-actions{gap:6px}.hud-actions .icon-btn{width:31px;height:31px}.mini-brand{font-size:9px;letter-spacing:1px}.mini-brand .brand-mark{display:none}.vitals{gap:12px;margin-top:16px}.vital-label,.bar{width:70px}#hotbar{bottom:22px;gap:3px;padding:5px}.slot{width:42px;height:45px}.block-icon{width:18px;height:18px}.modal{padding:23px 18px}.modal h2{font-size:25px}.shop-grid{grid-template-columns:repeat(2,1fr)}.guide-columns{grid-template-columns:1fr}.wallet .currency{font-size:9px}}
+@media(max-height:650px) and (min-width:601px){.menu-header{height:78px;padding-top:20px}.hero{top:49%}.hero .eyebrow{margin-bottom:13px}.hero-copy{margin:17px 0;font-size:12px}.menu-footer{bottom:18px;padding-top:15px}h1{font-size:65px}.mode-picker{margin-bottom:10px}.primary{padding:13px 20px}.seed-line{margin-top:12px}}
+</style>
+</head>
+<body>
+<div id="app">
+<canvas id="world"></canvas>
+<div class="shade" id="shade"></div>
+
+<section class="screen" id="menu">
+<header class="menu-header">
+<div class="brand">
+<div class="brand-mark"><svg width="25" height="25" viewBox="0 0 24 24" fill="none"><path d="m12 2 9 5v10l-9 5-9-5V7l9-5Z" stroke="currentColor" stroke-width="1.7"/><path d="m3 7 9 5 9-5M12 12v10M7.5 4.5l9 5v5" stroke="currentColor" stroke-width="1.7"/></svg></div>
+<div><div class="brand-name">TERRAFALL</div><div class="brand-sub">A WORLD OF YOUR OWN</div></div>
+</div>
+<nav class="menu-nav">
+<button class="text-btn" data-open="guide">Field guide</button>
+<button class="text-btn" data-open="blueprint">Studio blueprint</button>
+<button class="icon-btn" id="soundBtn" aria-label="Toggle sound">♫</button>
+</nav>
+</header>
+<div class="hero">
+<div class="eyebrow"><span class="live-dot"></span> THE LITTLE SANDBOX WITH A BIG HEART</div>
+<h1>Small blocks.<br><em>Big horizons.</em></h1>
+<p class="hero-copy">A quiet place to make something wonderful.<br>Explore the wild, build your own corner, and<br>take the long way home.</p>
+<div class="mode-picker"><button class="mode active" data-mode="survival">Survival</button><button class="mode" data-mode="creative">Creative</button></div>
+<button class="primary" id="startBtn">Step into the wild <svg viewBox="0 0 24 24" fill="none"><path d="M4 12h15m-6-6 6 6-6 6" stroke="currentColor" stroke-width="2"/></svg></button>
+<div class="seed-line"><span>WORLD SEED</span><input id="seedInput" value="MOSS-042" maxlength="14" aria-label="World seed"><button class="daily" id="dailyBtn">✦ &nbsp; Daily discovery <span id="dailyText">+75 coins</span></button></div>
+</div>
+<div class="preview-label"><div class="tiny">NOW GROWING IN YOUR WORLD</div><div class="preview-title">Mosslight Valley</div><div class="preview-pill"><span></span> 24°C &nbsp; / &nbsp; GENTLE BREEZE</div></div>
+<footer class="menu-footer">
+<div class="features">
+<div class="feature"><svg class="feature-icon" viewBox="0 0 24 24" fill="none"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z M4 7.5l8 4.5 8-4.5M12 12v9" stroke="currentColor" stroke-width="1.5"/></svg><div><strong>Make it yours</strong><small>One block at a time</small></div></div>
+<div class="feature"><svg class="feature-icon" viewBox="0 0 24 24" fill="none"><path d="M12 21V10m0 5c-6 0-8-4-8-8 5 0 8 2 8 8Zm0-3c5 0 8-4 8-8-5 0-8 3-8 8Z" stroke="currentColor" stroke-width="1.5"/></svg><div><strong>Find your flow</strong><small>Follow the feeling</small></div></div>
+<div class="feature"><svg class="feature-icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.5"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="1.5"/></svg><div><strong>Go at your pace</strong><small>No rush. No rules.</small></div></div>
+</div>
+<div class="footer-note">MADE FOR THE CURIOUS &nbsp; · &nbsp; v0.1 FIELD NOTES</div>
+</footer>
+</section>
+
+<div id="hud" class="hidden">
+<div class="hud-top">
+<div><div class="mini-brand"><div class="brand-mark"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="m12 2 9 5v10l-9 5-9-5V7l9-5Z" stroke="currentColor" stroke-width="1.7"/><path d="m3 7 9 5 9-5M12 12v10" stroke="currentColor" stroke-width="1.7"/></svg></div> MOSSLIGHT VALLEY</div>
+<div class="vitals"><div><div class="vital-label"><span>VITALITY</span><span id="healthNum">100</span></div><div class="bar"><div class="bar-fill" id="healthBar"></div></div></div><div><div class="vital-label"><span>FULLNESS</span><span id="hungerNum">100</span></div><div class="bar"><div class="bar-fill hunger" id="hungerBar"></div></div></div></div>
+</div>
+<div class="hud-actions"><div class="wallet"><div class="currency"><span class="coin-icon">◆</span><span id="coinCount">250</span></div><div class="currency"><span class="gem-icon">✦</span><span id="gemCount">12</span></div></div><button class="icon-btn" data-open="shop" aria-label="Shop">◇</button><button class="icon-btn" data-open="inventory" aria-label="Inventory">⊞</button><button class="icon-btn" data-open="pause" aria-label="Pause">Ⅱ</button></div>
+</div>
+<div id="crosshair" class="hidden"></div>
+<div id="hotbar" class="hidden"></div>
+<div id="toast"></div>
+<div id="touchControls">
+<div class="joystick" id="joystick"><div class="stick" id="stick"></div></div>
+<div class="touch-actions"><button class="touch-btn jump" id="jumpBtn">JUMP</button><button class="touch-btn" id="breakBtn">BREAK</button><button class="touch-btn" id="placeBtn">PLACE</button></div>
+</div>
+<div id="modalOverlay" class="hidden"><div class="modal" id="modal"></div></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(() => {
+'use strict';
+const $ = id => document.getElementById(id);
+const isTouch = matchMedia('(pointer:coarse)').matches;
+const clamp = (n,a,b) => Math.max(a,Math.min(b,n));
+const lerp = (a,b,t) => a+(b-a)*t;
+const icons = {
+ arrow:'<svg viewBox="0 0 24 24" fill="none"><path d="M4 12h15m-6-6 6 6-6 6" stroke="currentColor" stroke-width="2"/></svg>',
+ x:'<button class="close" data-close aria-label="Close">×</button>'
+};
+const blockInfo = {
+ grass:{label:'Meadow',color:'#80b878'}, dirt:{label:'Earth',color:'#a47c5c'},
+ stone:{label:'Slate',color:'#899b9a'}, wood:{label:'Timber',color:'#b88b5e'},
+ leaves:{label:'Leaves',color:'#4e9270'}, crystal:{label:'Sunstone',color:'#e6c77e'},
+ sand:{label:'Sand',color:'#d6c18c'}, water:{label:'Water',color:'#65b8bd'}
+};
+let state='menu', mode='survival', selected=0, elapsed=0, dayTime=.22;
+let coins=+(localStorage.getItem('terra-coins')||250), gems=+(localStorage.getItem('terra-gems')||12);
+let owned=JSON.parse(localStorage.getItem('terra-owned')||'[]');
+let inventory={grass:32,dirt:32,stone:16,wood:12,leaves:8,crystal:4};
+let soundOn=true, audio=null, toastTimer, lastChunk='', hungerClock=0, damageClock=0;
+let seed=42, sensitivity=.0022, particles=[], mobs=[];
+const keys={}, touchMove={x:0,y:0};
+const player={pos:new THREE.Vector3(),vel:new THREE.Vector3(),yaw:.35,pitch:0,health:100,hunger:100,grounded:false};
+
+function initAudio(){try{if(!audio)audio=new (window.AudioContext||window.webkitAudioContext)();if(audio.state==='suspended')audio.resume()}catch(e){}}
+function sfx(type='click'){
+ if(!soundOn||!audio)return;
+ const now=audio.currentTime, osc=audio.createOscillator(), gain=audio.createGain();
+ const settings={click:[380,.045,'sine'],break:[150,.11,'triangle'],place:[260,.07,'square'],coin:[720,.16,'sine'],jump:[330,.1,'triangle'],hurt:[90,.2,'sawtooth'],craft:[440,.18,'triangle']}[type]||[380,.05,'sine'];
+ osc.type=settings[2];osc.frequency.setValueAtTime(settings[0],now);osc.frequency.exponentialRampToValueAtTime(settings[0]*(type==='break'?.45:1.5),now+settings[1]);
+ gain.gain.setValueAtTime(.045,now);gain.gain.exponentialRampToValueAtTime(.001,now+settings[1]);
+ osc.connect(gain);gain.connect(audio.destination);osc.start(now);osc.stop(now+settings[1]);
+}
+function save(){localStorage.setItem('terra-coins',coins);localStorage.setItem('terra-gems',gems);localStorage.setItem('terra-owned',JSON.stringify(owned))}
+function notify(message){ $('toast').textContent=message;$('toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.remove('show'),2800) }
+function updateWallet(){$('coinCount').textContent=coins.toLocaleString();$('gemCount').textContent=gems}
+
+/* Voxel world: deterministic value noise + independently streamed instanced chunks. */
+const canvas=$('world');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:!isTouch,alpha:false,powerPreference:'high-performance'});
+renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
+renderer.setSize(innerWidth,innerHeight);
+renderer.shadowMap.enabled=!isTouch;
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.outputEncoding=THREE.sRGBEncoding;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.18;
+const scene=new THREE.Scene();
+scene.background=new THREE.Color('#91c7c2');
+scene.fog=new THREE.Fog('#91c7c2',25,88);
+const camera=new THREE.PerspectiveCamera(72,innerWidth/innerHeight,.08,150);
+camera.rotation.order='YXZ';
+const hemi=new THREE.HemisphereLight('#e4f5dc','#3b6862',1.18);scene.add(hemi);
+const sun=new THREE.DirectionalLight('#fff0c9',2.1);sun.position.set(-25,45,20);sun.castShadow=true;
+sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-35;sun.shadow.camera.right=35;sun.shadow.camera.top=35;sun.shadow.camera.bottom=-35;sun.shadow.camera.far=110;sun.shadow.bias=-.001;scene.add(sun);
+const worldGroup=new THREE.Group();scene.add(worldGroup);
+const cubeGeo=new THREE.BoxGeometry(1,1,1);
+function texture(hex,detail=12){
+ const c=document.createElement('canvas');c.width=c.height=16;const x=c.getContext('2d');x.fillStyle=hex;x.fillRect(0,0,16,16);
+ for(let i=0;i<detail;i++){x.fillStyle=i%2?'rgba(255,255,255,.07)':'rgba(0,0,0,.065)';x.fillRect(Math.random()*15,Math.random()*15,2,2)}
+ const t=new THREE.CanvasTexture(c);t.magFilter=THREE.NearestFilter;t.minFilter=THREE.NearestFilter;return t;
+}
+function mat(hex){return new THREE.MeshStandardMaterial({map:texture(hex),roughness:1})}
+const mats={
+ grass:mat('#79af70'),dirt:mat('#997454'),stone:mat('#849694'),wood:mat('#b18a61'),
+ leaves:mat('#4e8c62'),crystal:mat('#dfc47e'),sand:mat('#d2c18e'),
+ water:new THREE.MeshStandardMaterial({color:'#54a9b1',transparent:true,opacity:.72,roughness:.38,metalness:.08})
+};
+const world=new Map(), chunks=new Map();
+function hash(x,z){const n=Math.sin(x*127.1+z*311.7+seed*74.2)*43758.5453;return n-Math.floor(n)}
+function noise(x,z){
+ const ix=Math.floor(x),iz=Math.floor(z);let fx=x-ix,fz=z-iz;fx=fx*fx*(3-2*fx);fz=fz*fz*(3-2*fz);
+ return lerp(lerp(hash(ix,iz),hash(ix+1,iz),fx),lerp(hash(ix,iz+1),hash(ix+1,iz+1),fx),fz);
+}
+function height(x,z){return Math.floor(5+noise(x*.055,z*.055)*6+noise(x*.16,z*.16)*2)}
+const key=(x,y,z)=>x+','+y+','+z;
+function put(x,y,z,type){if(!world.has(key(x,y,z)))world.set(key(x,y,z),{x,y,z,type})}
+function buildChunk(cx,cz){
+ const id=cx+','+cz;if(chunks.has(id))return;
+ const blocks=[];
+ for(let lx=0;lx<16;lx++)for(let lz=0;lz<16;lz++){
+  const x=cx*16+lx,z=cz*16+lz,h=height(x,z);
+  for(let y=0;y<=h;y++){const type=y===h?(h<=8?'sand':'grass'):y>h-3?'dirt':'stone';put(x,y,z,type);blocks.push(key(x,y,z))}
+  if(h>8&&hash(x,z)>.965){
+   for(let y=1;y<=4;y++){put(x,h+y,z,'wood');blocks.push(key(x,h+y,z))}
+   for(let dx=-2;dx<=2;dx++)for(let dz=-2;dz<=2;dz++)for(let dy=3;dy<=5;dy++){
+    if(Math.abs(dx)+Math.abs(dz)+(dy===5?2:0)<5){const k=key(x+dx,h+dy,z+dz);if(!world.has(k)){put(x+dx,h+dy,z+dz,'leaves');blocks.push(k)}}
+   }
+  }
+  if(h<=7)for(let y=h+1;y<=7;y++){put(x,y,z,'water');blocks.push(key(x,y,z))}
+ }
+ const mesh=new THREE.InstancedMesh(cubeGeo,mats.grass,blocks.length), dummy=new THREE.Object3D();
+ blocks.forEach((k,i)=>{const b=world.get(k);dummy.position.set(b.x,b.y,b.z);dummy.updateMatrix();mesh.setMatrixAt(i,dummy.matrix);mesh.setColorAt(i,new THREE.Color(b.type==='grass'?'#ffffff':'#ffffff'))});
+ mesh.userData={id,blocks};mesh.receiveShadow=true;mesh.castShadow=false;worldGroup.add(mesh);chunks.set(id,mesh);
+}
+function stream(){
+ const cx=Math.floor(player.pos.x/16),cz=Math.floor(player.pos.z/16),id=cx+','+cz;
+ if(id===lastChunk&&state!=='menu')return;lastChunk=id;
+ const radius=isTouch?1:2;
+ for(let x=cx-radius;x<=cx+radius;x++)for(let z=cz-radius;z<=cz+radius;z++)buildChunk(x,z);
+ for(const [id,mesh]of chunks){const [x,z]=id.split(',').map(Number);if(Math.abs(x-cx)>radius+1||Math.abs(z-cz)>radius+1){worldGroup.remove(mesh);chunks.delete(id)}}
+}
+function rebuild(x,z){const id=Math.floor(x/16)+','+Math.floor(z/16),old=chunks.get(id);if(old)worldGroup.remove(old);chunks.delete(id);buildChunk(...id.split(',').map(Number));lastChunk=''}
+function solid(x,y,z){const b=world.get(key(Math.floor(x),Math.floor(y),Math.floor(z)));return b&&b.type!=='water'&&b.type!=='leaves'}
+function collision(p){
+ for(let x=Math.floor(p.x-.29);x<=Math.floor(p.x+.29);x++)
+ for(let y=Math.floor(p.y);y<=Math.floor(p.y+1.72);y++)
+ for(let z=Math.floor(p.z-.29);z<=Math.floor(p.z+.29);z++)
+ if(solid(x,y,z))return true;
+ return false;
+}
+function resetPlayer(){player.pos.set(2,height(2,2)+1.03,2);player.vel.set(0,0,0);player.health=100;player.hunger=100;player.grounded=false}
+function createMobs(){
+ for(let i=0;i<7;i++){
+  const mesh=new THREE.Mesh(new THREE.IcosahedronGeometry(.32,0),new THREE.MeshStandardMaterial({color:'#eab982',emissive:'#9c683e',emissiveIntensity:.35}));
+  mesh.position.set((hash(i,4)-.5)*35,10,(hash(i,8)-.5)*35);scene.add(mesh);mobs.push({mesh,phase:i*2});
+ }
+}
+buildChunk(0,0);resetPlayer();createMobs();
+
+const highlight=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(1.012,1.012,1.012)),new THREE.LineBasicMaterial({color:'#e4ffd2',transparent:true,opacity:.8}));highlight.visible=false;scene.add(highlight);
+const raycaster=new THREE.Raycaster();raycaster.far=7;
+function targetBlock(){
+ raycaster.setFromCamera(new THREE.Vector2(0,0),camera);
+ const hits=raycaster.intersectObjects([...chunks.values()],false);
+ if(!hits.length)return null;
+ const hit=hits[0],b=hit.object.userData.blocks[hit.instanceId],block=world.get(b);
+ if(!block||block.type==='water')return null;
+ return {block,normal:hit.face.normal.clone(),point:hit.point.clone()};
+}
+function burst(pos,color){
+ for(let i=0;i<9;i++){
+  const mesh=new THREE.Mesh(cubeGeo,new THREE.MeshBasicMaterial({color}));mesh.scale.setScalar(.07+Math.random()*.07);mesh.position.copy(pos);scene.add(mesh);
+  particles.push({mesh,v:new THREE.Vector3((Math.random()-.5)*3,Math.random()*3,(Math.random()-.5)*3),life:.55});
+ }
+}
+function breakBlock(){
+ if(state!=='playing')return;const hit=targetBlock();if(!hit)return;
+ const b=hit.block;world.delete(key(b.x,b.y,b.z));rebuild(b.x,b.z);
+ if(mode==='survival')inventory[b.type]=(inventory[b.type]||0)+1;
+ burst(new THREE.Vector3(b.x,b.y,b.z),blockInfo[b.type].color);sfx('break');renderHotbar();
+ if(b.type==='crystal'){coins+=12;notify('+12 coins · Sunstone discovered');updateWallet();save()}
+}
+function placeBlock(){
+ if(state!=='playing')return;const hit=targetBlock();if(!hit)return;
+ const b=hit.block,n=hit.normal,p={x:b.x+Math.round(n.x),y:b.y+Math.round(n.y),z:b.z+Math.round(n.z)};
+ const type=blockInfo[Object.keys(blockInfo)[selected]]?'grass':'grass';
+ const chosen=['grass','dirt','stone','wood','leaves','crystal'][selected];
+ if(world.has(key(p.x,p.y,p.z)))return;
+ if(mode==='survival'&&!(inventory[chosen]>0)){notify('Find more '+blockInfo[chosen].label.toLowerCase()+' first');return}
+ const old=player.pos.clone();player.pos.set(p.x,p.y,p.z);if(collision(player.pos)){player.pos.copy(old);return}player.pos.copy(old);
+ put(p.x,p.y,p.z,chosen);rebuild(p.x,p.z);if(mode==='survival')inventory[chosen]--;sfx('place');renderHotbar();
+}
+function renderHotbar(){
+ const list=['grass','dirt','stone','wood','leaves','crystal'];
+ $('hotbar').innerHTML=list.map((t,i)=>`<button class="slot ${i===selected?'active':''}" data-slot="${i}" aria-label="${blockInfo[t].label}"><span class="slot-key">${i+1}</span><div class="block-icon" style="background:${blockInfo[t].color}"></div><span class="slot-count">${mode==='creative'?'∞':inventory[t]||0}</span><span class="slot-label">${blockInfo[t].label}</span></button>`).join('');
+}
+
+/* Input and accessible modal routing. */
+function startGame(){
+ initAudio();sfx('craft');$('seedInput').value=$('seedInput').value||'MOSS-042';seed=[...($('seedInput').value||'MOSS')].reduce((a,c)=>a+c.charCodeAt(0),0);
+ $('menu').classList.add('hidden');$('hud').classList.remove('hidden');$('hotbar').classList.remove('hidden');$('crosshair').classList.remove('hidden');$('shade').style.opacity='0';
+ if(isTouch)$('touchControls').style.display='block';
+ state='playing';resetPlayer();stream();renderHotbar();notify(mode==='creative'?'Creative world · make something beautiful':'Welcome to Mosslight Valley');
+ if(!isTouch)try{canvas.requestPointerLock()}catch(e){}
+}
+function returnMenu(){
+ state='menu';document.exitPointerLock?.();$('modalOverlay').classList.add('hidden');$('menu').classList.remove('hidden');$('hud').classList.add('hidden');$('hotbar').classList.add('hidden');$('crosshair').classList.add('hidden');$('touchControls').style.display='none';$('shade').style.opacity='1';
+}
+function openModal(type){
+ if(type==='pause'&&state==='playing'){state='paused';document.exitPointerLock?.()}
+ if(type==='inventory'||type==='shop')state=state==='menu'?'menu':'paused';
+ $('modalOverlay').classList.remove('hidden');$('modal').className='modal'+(type==='blueprint'?' wide':'');
+ let html='';
+ if(type==='pause')html=`<div class="modal-top"><div><div class="modal-kicker">TAKE A BREATHER</div><h2>Your world can wait.</h2></div>${icons.x}</div><p>Everything is right where you left it.</p><div class="pause-actions"><button class="primary" data-resume>Back to the wild ${icons.arrow}</button><button class="secondary" data-open="settings">Settings & accessibility</button><button class="secondary" data-menu>Save & return to title</button></div>`;
+ if(type==='inventory')html=`<div class="modal-top"><div><div class="modal-kicker">A POCKETFUL OF POSSIBILITIES</div><h2>Your field pack</h2></div>${icons.x}</div><div class="inventory-grid">${Object.keys(blockInfo).slice(0,6).map(t=>`<div class="pack-item"><div class="block-icon" style="background:${blockInfo[t].color}"></div><strong>${blockInfo[t].label}</strong><span>${mode==='creative'?'UNLIMITED':inventory[t]||0} blocks</span></div>`).join('')}</div><div class="section-label">Little recipes</div><div class="recipe-row"><div>Timber bundle<small>4 timber → 4 meadow blocks</small></div><button class="small-btn" data-craft>Craft</button></div><div class="recipe-row"><div>Sunstone lantern<small>2 sunstone + 1 timber → 25 coins</small></div><button class="small-btn" data-lantern>Craft</button></div>`;
+ if(type==='shop')html=`<div class="modal-top"><div><div class="modal-kicker">THE CORNER STORE</div><h2>Good things, small treasures.</h2></div>${icons.x}</div><p>Cosmetic-only extras. Your imagination is the real power-up.</p><div class="shop-balance"><div class="currency"><span class="coin-icon">◆</span> ${coins.toLocaleString()} coins</div><div class="currency"><span class="gem-icon">✦</span> ${gems} gems</div></div><div class="shop-grid">${[{id:'cape',name:'Dawn cape',icon:'〰',cost:180,currency:'coins'},{id:'pet',name:'Pebble pal',icon:'◆',cost:8,currency:'gems'},{id:'theme',name:'Golden hour',icon:'☼',cost:240,currency:'coins'},{id:'skin',name:'Fern explorer',icon:'✦',cost:12,currency:'gems'},{id:'trail',name:'Firefly trail',icon:'✧',cost:150,currency:'coins'},{id:'hat',name:'Cloud hat',icon:'⌁',cost:6,currency:'gems'}].map(i=>`<div class="shop-item"><div class="shop-art">${i.icon}</div><strong>${i.name}</strong><small>${owned.includes(i.id)?'IN YOUR COLLECTION':'A LITTLE SOMETHING FOR YOU'}</small><button class="small-btn" data-buy="${i.id}" data-cost="${i.cost}" data-currency="${i.currency}" ${owned.includes(i.id)?'disabled':''}>${owned.includes(i.id)?'Owned':(i.currency==='coins'?'◆ ':'✦ ')+i.cost}</button></div>`).join('')}</div><p style="font-size:9px;margin-top:18px">Prototype wallet · no real-money charges. Production purchases require store billing and server-side validation.</p>`;
+ if(type==='guide')html=`<div class="modal-top"><div><div class="modal-kicker">THE FIELD GUIDE</div><h2>Follow your curiosity.</h2></div>${icons.x}</div><div class="guide-columns"><div><div class="guide-block"><strong>Move & look</strong><p><span class="key">W A S D</span> to wander<br><span class="key">SPACE</span> to jump<br>Mouse or drag to look around</p></div><div class="guide-block"><strong>Make your mark</strong><p><span class="key">LEFT CLICK</span> break a block<br><span class="key">RIGHT CLICK</span> place a block<br><span class="key">1 – 6</span> choose a material</p></div></div><div><div class="guide-block"><strong>Take a little break</strong><p><span class="key">E</span> field pack & crafting<br><span class="key">ESC</span> pause & settings<br><span class="key">SHIFT</span> move a little faster</p></div><div class="guide-block"><strong>On a touch screen</strong><p>Use the left stick to move.<br>Drag the world to look.<br>Tap BREAK / PLACE / JUMP.</p></div></div></div><button class="primary" data-close>Got it ${icons.arrow}</button>`;
+ if(type==='settings')html=`<div class="modal-top"><div><div class="modal-kicker">MAKE YOURSELF AT HOME</div><h2>Settings</h2></div>${icons.x}</div><div class="setting-row"><span>Sound effects</span><button class="small-btn" data-sound>${soundOn?'On':'Off'}</button></div><div class="setting-row"><span>Look sensitivity</span><input id="sensitivity" type="range" min="1" max="5" value="${sensitivity*1000}" style="accent-color:#b9f3ce;width:130px"></div><div class="setting-row"><span>World style</span><span style="color:var(--mint);font-size:10px">Soft & natural</span></div><button class="primary" data-close>Done ${icons.arrow}</button>`;
+ if(type==='gameover')html=`<div class="modal-top"><div><div class="modal-kicker">EVEN EXPLORERS NEED A REST</div><h2>A little too far.</h2></div></div><p>The wild got the better of you this time.<br>Your world and your discoveries are safe.</p><div class="shop-balance"><div class="currency"><span class="coin-icon">◆</span> ${coins.toLocaleString()} coins earned</div></div><button class="primary" data-respawn>One more adventure ${icons.arrow}</button><button class="secondary" data-menu style="width:100%;margin-top:10px">Return to title</button>`;
+ if(type==='blueprint')html=`<div class="modal-top"><div><div class="modal-kicker">TERRAFALL / STUDIO BLUEPRINT</div><h2>From first block to launch.</h2></div>${icons.x}</div><div class="blueprint"><p>This playable browser field test demonstrates the core loop: streamed voxel chunks, first-person interaction, inventory, a cosmetic wallet, and touch-friendly controls. The production mobile architecture follows.</p><h3>01 — ARCHITECTURE</h3><div class="code-block">Unity Client (C#)
+├─ Core: bootstrap, game state, input actions
+├─ World: seed, noise, chunk registry, meshing
+├─ Player: controller, stats, inventory, crafting
+├─ Economy: catalog, wallet UI, receipt handoff
+└─ Services: auth, cloud save, analytics, audio
+
+Trusted Backend (Node.js / TypeScript)
+├─ API: auth, profiles, worlds, catalog
+├─ Economy: idempotent ledger, grants, receipts
+├─ Realtime: rooms, presence, world events
+└─ Storage: Postgres + object storage + Redis
+
+Production flow: client → store receipt → backend
+verification → signed transaction → wallet balance.
+Never accept client-supplied currency balances.</p><h3>02 — MVP → BETA → LAUNCH</h3><ul><li><b>MVP (8–12 weeks):</b> fixed-seed chunks, block breaking/placing, collision, hotbar, survival/creative, local saves, touch + gamepad input, Android internal test.</li><li><b>Beta (12–20 weeks):</b> biomes, caves, crafting, mobs, day/night, hunger, auth, cloud saves, shop catalog, Play Billing + sandbox IAP, telemetry and crash reporting.</li><li><b>Launch (8–12 weeks):</b> Apple StoreKit 2, server receipt validation, restore purchases, GDPR/CCPA, accessibility, device performance matrix, co-op beta, store assets and phased rollout.</li></ul><h3>03 — DATA & DELIVERY</h3><div class="code-box">players(id, provider, display_name, created_at)
+wallets(player_id, coins, gems, version)
+items(id, type, price_coins, price_gems, metadata)
+inventory(player_id, item_id, quantity)
+transactions(id, player_id, item_id, amount,
+  currency, kind, store_txn_id, created_at)
+worlds(id, owner_id, seed, mode, version, saved_at)
+receipts(id, player_id, store, payload, status)
+
+Testing: unit noise/ledger, play-mode collision,
+device profiling, penetration/auth tests.
+Release: privacy labels, content rating, icons,
+screenshots, receipt replay tests, staged rollout.</div></div>`;
+ $('modal').innerHTML=html;
+ const sens=$('sensitivity');if(sens)sens.oninput=e=>sensitivity=+e.target.value/1000;
+}
+function closeModal(){ $('modalOverlay').classList.add('hidden');if(state==='paused'){state='playing';if(!isTouch)try{canvas.requestPointerLock()}catch(e){}} }
+
+$('startBtn').onclick=startGame;
+$('dailyBtn').onclick=()=>{
+ const today=new Date().toDateString();if(localStorage.getItem('terra-daily')===today){notify('Your daily discovery is already collected ✦');return}
+ localStorage.setItem('terra-daily',today);coins+=75;save();updateWallet();sfx('coin');notify('+75 coins · a good day to explore');$('dailyText').textContent='Collected ✓';
+};
+$('soundBtn').onclick=()=>{initAudio();soundOn=!soundOn;$('soundBtn').textContent=soundOn?'♫':'♪';notify(soundOn?'Sound on':'Sound off')};
+document.addEventListener('click',e=>{
+ const b=e.target.closest('button');if(!b)return;
+ if(b.dataset.open){openModal(b.dataset.open);sfx();return}
+ if(b.hasAttribute('data-close')){closeModal();return}
+ if(b.hasAttribute('data-resume')){closeModal();return}
+ if(b.hasAttribute('data-menu')){returnMenu();return}
+ if(b.hasAttribute('data-respawn')){closeModal();resetPlayer();notify('A fresh start');return}
+ if(b.dataset.slot!==undefined){selected=+b.dataset.slot;renderHotbar();sfx();return}
+ if(b.dataset.mode){mode=b.dataset.mode;document.querySelectorAll('.mode').forEach(x=>x.classList.toggle('active',x===b));sfx();return}
+ if(b.hasAttribute('data-sound')){soundOn=!soundOn;openModal('settings');return}
+ if(b.hasAttribute('data-craft')){
+  if(inventory.wood>=1){inventory.wood--;inventory.grass+=4;sfx('craft');notify('Crafted 4 meadow blocks');openModal('inventory');renderHotbar()}else notify('You need 1 timber');return;
+ }
+ if(b.hasAttribute('data-lantern')){
+  if(inventory.crystal>=2&&inventory.wood>=1){inventory.crystal-=2;inventory.wood--;coins+=25;save();updateWallet();sfx('coin');notify('+25 coins · Sunstone lantern');openModal('inventory')}else notify('You need 2 sunstone and 1 timber');return;
+ }
+ if(b.dataset.buy){
+  const cost=+b.dataset.cost,currency=b.dataset.currency;if((currency==='coins'?coins:gems)<cost){notify('Not enough '+currency+' yet');return}
+  if(currency==='coins')coins-=cost;else gems-=cost;owned.push(b.dataset.buy);save();updateWallet();sfx('coin');notify('Added to your collection ✦');openModal('shop');
+ }
+});
+$('modalOverlay').addEventListener('click',e=>{if(e.target===$('modalOverlay'))closeModal()});
+
+document.addEventListener('keydown',e=>{
+ keys[e.code]=true;
+ if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code))e.preventDefault();
+ if(e.code==='Escape'){if(!$('modalOverlay').classList.contains('hidden'))closeModal();else if(state==='playing')openModal('pause')}
+ if(state!=='playing')return;
+ if(e.code==='KeyE')openModal('inventory');
+ if(e.code==='Space'&&player.grounded){player.vel.y=7.2;player.grounded=false;sfx('jump')}
+ if(/^Digit[1-6]$/.test(e.code)){selected=+e.code.slice(-1)-1;renderHotbar()}
+});
+document.addEventListener('keyup',e=>keys[e.code]=false);
+document.addEventListener('pointerlockchange',()=>{if(!document.pointerLockElement&&state==='playing'&&!isTouch){/* input remains available through drag */}});
+let lookPointer=null,lookX=0,lookY=0,lookDistance=0;
+canvas.addEventListener('pointerdown',e=>{
+ if(state!=='playing')return;
+ if(e.pointerType==='touch'){lookPointer=e.pointerId;lookX=e.clientX;lookY=e.clientY;lookDistance=0;canvas.setPointerCapture(e.pointerId);return}
+ if(e.button===2){placeBlock();return}
+ if(document.pointerLockElement){if(e.button===0)breakBlock();return}
+ lookPointer=e.pointerId;lookX=e.clientX;lookY=e.clientY;lookDistance=0;canvas.setPointerCapture(e.pointerId);
+});
+canvas.addEventListener('pointermove',e=>{
+ if(state!=='playing')return;
+ let dx=0,dy=0;
+ if(document.pointerLockElement&&e.pointerType!=='touch'){dx=e.movementX;dy=e.movementY}
+ else if(lookPointer===e.pointerId){dx=e.clientX-lookX;dy=e.clientY-lookY;lookX=e.clientX;lookY=e.clientY;lookDistance+=Math.abs(dx)+Math.abs(dy)}
+ player.yaw-=dx*sensitivity;player.pitch=clamp(player.pitch-dy*sensitivity,-1.48,1.48);
+});
+canvas.addEventListener('pointerup',e=>{
+ if(lookPointer===e.pointerId&&!document.pointerLockElement&&e.pointerType!=='touch'&&lookDistance<8)breakBlock();
+ lookPointer=null;
+});
+canvas.addEventListener('contextmenu',e=>e.preventDefault());
+$('hotbar').addEventListener('click',e=>{const b=e.target.closest('[data-slot]');if(b){selected=+b.dataset.slot;renderHotbar()}});
+$('jumpBtn').addEventListener('pointerdown',e=>{e.preventDefault();if(player.grounded){player.vel.y=7.2;player.grounded=false;sfx('jump')}});
+$('breakBtn').addEventListener('pointerdown',e=>{e.preventDefault();breakBlock()});
+$('placeBtn').addEventListener('pointerdown',e=>{e.preventDefault();placeBlock()});
+const joystick=$('joystick');
+function moveStick(e){
+ const r=joystick.getBoundingClientRect(),dx=e.clientX-r.left-r.width/2,dy=e.clientY-r.top-r.height/2,len=Math.hypot(dx,dy),max=39;
+ touchMove.x=clamp(dx/max,-1,1);touchMove.y=clamp(dy/max,-1,1);$('stick').style.transform=`translate(${clamp(dx,-max,max)}px,${clamp(dy,-max,max)}px)`;
+}
+joystick.addEventListener('pointerdown',e=>{e.preventDefault();joystick.setPointerCapture(e.pointerId);moveStick(e)});
+joystick.addEventListener('pointermove',e=>{if(joystick.hasPointerCapture(e.pointerId))moveStick(e)});
+function resetStick(){touchMove.x=touchMove.y=0;$('stick').style.transform='translate(0,0)'}
+joystick.addEventListener('pointerup',resetStick);joystick.addEventListener('pointercancel',resetStick);
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+
+/* Simulation, lighting, particles, and lightweight ambient creatures. */
+function update(dt){
+ elapsed+=dt;
+ if(state==='menu'){
+  camera.position.set(Math.sin(elapsed*.075)*22,20+Math.sin(elapsed*.12)*2,Math.cos(elapsed*.075)*22);
+  camera.lookAt(0,7,0);highlight.visible=false;
+ }else if(state==='playing'){
+  dayTime=(dayTime+dt/300)%1;
+  const forward=(keys.KeyW?1:0)-(keys.KeyS?1:0)-touchMove.y;
+  const strafe=(keys.KeyD?1:0)-(keys.KeyA?1:0)+touchMove.x;
+  const len=Math.hypot(forward,strafe)||1,speed=(keys.ShiftLeft?6.5:4.6);
+  const vx=(-Math.sin(player.yaw)*forward+Math.cos(player.yaw)*strafe)/len*speed;
+  const vz=(-Math.cos(player.yaw)*forward-Math.sin(player.yaw)*strafe)/len*speed;
+  player.vel.x=lerp(player.vel.x,Math.abs(forward)+Math.abs(strafe)>0?vx:0,Math.min(1,dt*13));
+  player.vel.z=lerp(player.vel.z,Math.abs(forward)+Math.abs(strafe)>0?vz:0,Math.min(1,dt*13));
+  player.vel.y-=19*dt;
+  const old=player.pos.clone();
+  player.pos.x+=player.vel.x*dt;if(collision(player.pos)){player.pos.x=old.x;player.vel.x=0}
+  player.pos.z+=player.vel.z*dt;if(collision(player.pos)){player.pos.z=old.z;player.vel.z=0}
+  player.pos.y+=player.vel.y*dt;
+  if(collision(player.pos)){player.pos.y=old.y;player.grounded=player.vel.y<0;player.vel.y=0}else player.grounded=false;
+  if(player.pos.y<-8){player.health-=25;player.pos.set(2,height(2,2)+2,2);player.vel.set(0,0,0);notify('The valley caught you');sfx('hurt')}
+  camera.position.set(player.pos.x,player.pos.y+1.58,player.pos.z);camera.rotation.set(player.pitch,player.yaw,0);
+  stream();
+  hungerClock+=dt;
+  if(hungerClock>18&&mode==='survival'){hungerClock=0;player.hunger=Math.max(0,player.hunger-1);if(player.hunger===0)player.health=Math.max(0,player.health-3)}
+  if(player.health<=0&&state==='playing'){state='gameover';openModal('gameover');document.exitPointerLock?.()}
+  $('healthBar').style.width=player.health+'%';$('hungerBar').style.width=(mode==='creative'?100:player.hunger)+'%';
+  $('healthNum').textContent=Math.ceil(player.health);$('hungerNum').textContent=mode==='creative'?'∞':Math.ceil(player.hunger);
+  const hit=targetBlock();highlight.visible=!!hit;if(hit)highlight.position.set(hit.block.x,hit.block.y,hit.block.z);
+ }
+ const daylight=.5+.5*Math.sin(dayTime*Math.PI*2);
+ const sky=new THREE.Color().setHSL(.49,.28,.36+daylight*.25);scene.background.lerp(sky,dt*.45);scene.fog.color.copy(scene.background);
+ sun.position.set(Math.cos(dayTime*Math.PI*2)*35,12+daylight*38,Math.sin(dayTime*Math.PI*2)*35);sun.intensity=.6+daylight*1.6;
+ for(const m of mobs){
+  m.mesh.position.x+=Math.sin(elapsed*.3+m.phase)*dt*.18;m.mesh.position.z+=Math.cos(elapsed*.24+m.phase)*dt*.18;
+  m.mesh.position.y=height(m.mesh.position.x,m.mesh.position.z)+1.2+Math.sin(elapsed*1.8+m.phase)*.25;m.mesh.rotation.y+=dt*.35;
+  if(state==='playing'&&mode==='survival'&&m.mesh.position.distanceTo(player.pos)<1.65&&damageClock<=0){player.health-=5;damageClock=3;sfx('hurt');notify('A curious pebble startled you')}
+ }
+ damageClock-=dt;
+ for(let i=particles.length-1;i>=0;i--){
+  const p=particles[i];p.life-=dt;p.v.y-=7*dt;p.mesh.position.addScaledVector(p.v,dt);p.mesh.rotation.x+=dt*4;
+  if(p.life<=0){scene.remove(p.mesh);p.mesh.material.dispose();particles.splice(i,1)}
+ }
+}
+function frame(){requestAnimationFrame(frame);const dt=Math.min(clock.getDelta(),.04);update(dt);renderer.render(scene,camera)}
+const clock=new THREE.Clock();
+updateWallet();renderHotbar();
+if(localStorage.getItem('terra-daily')===new Date().toDateString())$('dailyText').textContent='Collected ✓';
+frame();
+})();
+</script>
+</body>
+</html>
